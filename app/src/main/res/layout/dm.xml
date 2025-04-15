@@ -1,4 +1,5 @@
-<!-- res/layout/activity_dm_dashboard.xml -->
+<!-- res/layout/activity_dm_dashboard.xml
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
