@@ -43,7 +43,6 @@
         android:id="@+id/ivPdfPreview"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_pdf_icon"
         android:contentDescription="PDF Preview"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tvPdfFileName"
