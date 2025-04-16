@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/CharacterSheetFragment">
+
+    <fragment
+        android:id="@+id/CharacterSheetFragment"
+        android:name="com.msoe.dndassistant.CharacterSheetFragment"
+        android:label="Character Sheet" />
+    <fragment
+        android:id="@+id/SpellSlotFragment"
+        android:name="com.msoe.dndassistant.SpellSlotTrackerFragment"
+        android:label="Spell Slot" />
+    <fragment
+        android:id="@+id/CheatSheetFragment"
+        android:name="com.msoe.dndassistant.CombatCheatSheetFragment"
+        android:label="Cheat Sheet" />
+    <fragment
+        android:id="@+id/InitiativeFragment"
+        android:name="com.msoe.dndassistant.InitiativeTrackerFragment"
+        android:label="Initiative" />
+</navigation>

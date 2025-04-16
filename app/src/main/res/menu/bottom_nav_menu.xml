@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/CharacterSheetFragment"
+        android:icon="@android:drawable/ic_dialog_email"
+        android:title="Character Sheet" />
+    <item
+        android:id="@+id/SpellSlotFragment"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="Spell Slots" />
+    <item
+        android:id="@+id/CheatSheetFragment"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="Combat Actions" />
+    <item
+        android:id="@+id/InitiativeFragment"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Initiative" />
+</menu>

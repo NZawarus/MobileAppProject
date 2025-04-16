@@ -39,15 +39,5 @@
         android:layout_marginTop="16dp"/>
 
     <!-- Optional preview icon -->
-    <ImageView
-        android:id="@+id/ivPdfPreview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="PDF Preview"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/tvPdfFileName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

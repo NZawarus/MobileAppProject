@@ -24,6 +24,7 @@
         <activity android:name=".DMActivity"></activity>
         <activity android:name=".PlayerActivity"></activity>
         <activity android:name=".PlayerSheetActivity"></activity>
+        <activity android:name=".SessionViewActivity"></activity>
     </application>
 
 </manifest>
