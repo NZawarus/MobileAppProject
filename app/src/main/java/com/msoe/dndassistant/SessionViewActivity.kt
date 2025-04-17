@@ -16,5 +16,15 @@ class SessionViewActivity: AppCompatActivity() {
         val navController = navHostFragment.navController
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         bottomNav.setupWithNavController(navController)
+
+        // Pass PDF URI to the NavGraph's startDestination
+        val pdfUriString = intent.getStringExtra("pdf_uri")
+        if (pdfUriString != null && savedInstanceState == null) {
+            val bundle = Bundle().apply {
+                putString("pdf_uri", pdfUriString)
+            }
+            navController.setGraph(R.navigation.navgraph, bundle)
+        }
     }
+
 }
