@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.msoe.dndassistant.network.SessionManager
 
 class SessionViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.session_view)
+
+        val connection = SessionManager.connectionsClient
+        val endpointId = SessionManager.endpointId
 
         // Get the NavHostFragment and NavController
         val navHostFragment = supportFragmentManager

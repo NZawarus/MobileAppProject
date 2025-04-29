@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.msoe.dndassistant.network.SessionManager
 
 class PlayerSheetActivity : AppCompatActivity() {
 
@@ -24,6 +25,9 @@ class PlayerSheetActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player2)
+
+        val connection = SessionManager.connectionsClient
+        val endpointId = SessionManager.endpointId
 
         loadSheetButton = findViewById(R.id.btnLoadPdf)
         pdfPagesContainer = findViewById(R.id.pdfPagesContainer)

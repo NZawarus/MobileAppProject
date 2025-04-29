@@ -48,6 +48,14 @@ dependencies {
 
     // ✅ Add this line for pdfbox-android
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+    implementation(libs.play.services.nearby)
+    implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.room.runtime.jvm)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
