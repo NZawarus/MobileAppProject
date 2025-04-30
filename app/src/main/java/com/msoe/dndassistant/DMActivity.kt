@@ -1,8 +1,12 @@
 package com.msoe.dndassistant
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,12 +25,36 @@ class DMActivity : AppCompatActivity() {
     private lateinit var adapter: EncounterAdapter
     private lateinit var list: MutableList<Encounter>
     private lateinit var addButton: Button
+    private lateinit var code: String
+    private lateinit var viewJoinCode: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dm)
         recyclerView = findViewById(R.id.recyclerEncounters)
         addButton = findViewById(R.id.btnNewEncounter)
+        viewJoinCode = findViewById(R.id.viewJoinCode)
+
+        val permissions = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN
+        )
+
+        // Android 12+ doesn't need NEARBY_WIFI_DEVICES, but 13+ does
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.NEARBY_WIFI_DEVICES)
+        }
+
+        ActivityCompat.requestPermissions(
+            this,
+            permissions.toTypedArray(),
+            1001
+        )
+
+        startHosting()
+
+        viewJoinCode.text = code
 
         list = mutableListOf(
             Encounter("Encounter 1"),
@@ -43,7 +71,7 @@ class DMActivity : AppCompatActivity() {
     }
 
     private fun startHosting() {
-        val code = generateRandomCode()
+        code = generateRandomCode()
         SessionManager.isHost = true
         SessionManager.sessionCode = code
 

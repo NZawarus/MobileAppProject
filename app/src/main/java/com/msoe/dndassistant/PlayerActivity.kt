@@ -1,11 +1,14 @@
 package com.msoe.dndassistant
 
 import android.content.Intent
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback
 import com.google.android.gms.nearby.connection.ConnectionResolution
@@ -26,19 +29,37 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player)
 
-        SessionManager.initialize(this)
-        SessionManager.isHost = false
+        //SessionManager.initialize(this)
+        //SessionManager.isHost = false
+
+        //val permissions = mutableListOf(
+        //    Manifest.permission.ACCESS_FINE_LOCATION,
+        //    Manifest.permission.BLUETOOTH,
+        //    Manifest.permission.BLUETOOTH_ADMIN
+        //)
+
+        // Android 12+ doesn't need NEARBY_WIFI_DEVICES, but 13+ does
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        //    permissions.add(Manifest.permission.NEARBY_WIFI_DEVICES)
+        //}
+
+        //ActivityCompat.requestPermissions(
+        //    this,
+        //    permissions.toTypedArray(),
+        //    1001
+        //)
 
         val joinButton = findViewById<Button>(R.id.btnJoinSession)
-        val joinCode = findViewById<EditText>(R.id.etSessionCode)
+        //val joinCode = findViewById<EditText>(R.id.etSessionCode)
 
         joinButton.setOnClickListener {
-            desiredCode = joinCode.text.toString().uppercase()
-            if (desiredCode.length==4) {
-                startDiscovery()
-            } else {
-                Toast.makeText(this, "Session codes must be 4 letters.", Toast.LENGTH_SHORT).show()
-            }
+        //    desiredCode = joinCode.text.toString().uppercase()
+        //    if (desiredCode.length==4) {
+        //        startDiscovery()
+        //    } else {
+        //        Toast.makeText(this, "Session codes must be 4 letters.", Toast.LENGTH_SHORT).show()
+        //    }
+            goToPlayerSheet()
         }
     }
 
@@ -72,6 +93,10 @@ class PlayerActivity : AppCompatActivity() {
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
             if (result.status.isSuccess) {
                 SessionManager.endpointId = endpointId
+                val playerName = "TEST"
+                val joinMessage = "$playerName Joined"
+                val payload = Payload.fromBytes(joinMessage.toByteArray())
+                SessionManager.connectionsClient?.sendPayload(endpointId, payload)
                 goToPlayerSheet()
             }
         }
