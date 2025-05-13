@@ -19,7 +19,7 @@ class CombatCheatSheetFragment : Fragment() {
         """
         • Move up to your speed (Typically 30 feet for Medium Races)<br/>
         • Break up movement around actions<br/>
-        &emsp;• Example: Dave would like to move 15 feet to help Alex with a check, then use the remainder of his movement<br/>
+        &emsp;• Example: Dave would like to move 15 feet to help Alex with a check, then use the remainder of his movement to engage the enemy goblin.<br/>
         • Leaving melee range may provoke opportunity attacks<br/>
         &emsp;• Example: Dave is engaged in combat with a goblin, but attempts to move out of range. The goblin is able to make an attack roll against him.<br/>
         &emsp;• Opportunity attacks can be avoided by Disengaging (See Actions)
@@ -44,7 +44,7 @@ class CombatCheatSheetFragment : Fragment() {
         """.trimIndent(),
         """
         • Only available if something allows it<br/>
-        • Examples: Healing Word, Rage, Two-Weapon Fighting<br/>
+        • Examples: Dave is a paladin. He would like to use his bonus action to use Lay on Hands to heal Alex.<br/>
         • You may only take one bonus action per round<br/>
         • Unless specified by the ability, you may choose when to take a bonus action on your turn
         """.trimIndent(),
@@ -53,17 +53,18 @@ class CombatCheatSheetFragment : Fragment() {
         • First object interaction per turn is free<br/>
         • Communication is possible as you take your turn<br/>
         • Other options include a variety of flourishes unrelated to your action and movement<br/>
-        • Must be reasonable to achieve in one round of combat, or around 6 seconds)
+        • Must be reasonable to achieve in one round of combat, or around 6 seconds)<br/>
+        • Example: Dave, during his movement, unsheathes his greatsword, while yelling for Alex to flank the very fast goblin.
         """.trimIndent(),
         """
         • Used when something triggers a reaction<br/>
-        • Examples: Opportunity Attack, Shield spell<br/>
+        • Examples: Dave provokes an opportunity attack from an enemy goblin. In response, Alex uses his reaction to cast Shield, increasing Dave's AC by 5. This causes the goblin to miss their attack, and Dave is able to move away<br/>
         • Only one reaction per round
         """.trimIndent(),
         """
         • Use your action to prepare for later<br/>
         • Choose a trigger + an action<br/>
-        &emsp;• Example: If the goblin approaches me, I move away<br/>
+        &emsp;• Example: If the goblin approaches me, I will dash away towards the party<br/>
         • When it happens, use your reaction to act
         """.trimIndent()
     )
