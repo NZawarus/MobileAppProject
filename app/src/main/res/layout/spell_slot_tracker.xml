@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/spellSlotScrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="633dp"
     android:padding="0dp">
 
     <LinearLayout
@@ -11,14 +11,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <!-- Spell slots will be added programmatically -->
+        <!-- Spell slots will be added programmatically -->
 
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Long Rest"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center_horizontal"/>
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="Long Rest" />
     </LinearLayout>
 </ScrollView>

@@ -11,20 +11,26 @@ Comment-->
         android:id="@+id/etSessionCode"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
         android:hint="Enter Session Code"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnJoinSession"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btnJoinSession"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="250dp"
         android:text="Join Session"
-        app:layout_constraintTop_toBottomOf="@id/etSessionCode"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etSessionCode" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
