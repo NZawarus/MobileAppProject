@@ -1,101 +1,169 @@
 package com.msoe.dndassistant
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
-import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import java.io.IOException
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import android.content.Intent
+import android.net.Uri
+import androidx.fragment.app.activityViewModels
+import java.io.File
 
 class CharacterSheetFragment : Fragment() {
 
-    companion object {
-        private const val TAG = "CharacterSheetFragment"
+    private lateinit var loadSheetButton: Button
+    private lateinit var pdfPagesContainer: LinearLayout
+    private lateinit var fileNameTextView: TextView
+    private val viewModel: CharacterSheetViewModel by activityViewModels()
+
+
+    private val PICK_PDF_FILE = 1001
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        PDFBoxResourceLoader.init(requireContext().applicationContext)
     }
 
-    private lateinit var pdfImageView: ImageView
-    private var parcelFileDescriptor: ParcelFileDescriptor? = null
-    private var pdfRenderer: PdfRenderer? = null
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.character_sheet, container, false)
-        pdfImageView = view.findViewById(R.id.pdfImageView)
-        return view
+        return inflater.inflate(R.layout.character_sheet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1) Grab the URI argument
-        val uriString = arguments?.getString("pdf_uri")
-        Log.d(TAG, "Received pdf_uri argument: $uriString")
+        loadSheetButton = view.findViewById(R.id.btnLoadPdf)
+        pdfPagesContainer = view.findViewById(R.id.pdfPagesContainer)
+        fileNameTextView = view.findViewById(R.id.tvPdfFileName)
 
-        if (uriString.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "No PDF selected", Toast.LENGTH_SHORT).show()
-            return
+        viewModel.pdfBitmaps.observe(viewLifecycleOwner) { bitmaps ->
+            pdfPagesContainer.removeAllViews()
+            for (bitmap in bitmaps) {
+                val imageView = ImageView(requireContext())
+                imageView.setImageBitmap(bitmap)
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                layoutParams.setMargins(0, 16, 0, 16)
+                imageView.layoutParams = layoutParams
+                pdfPagesContainer.addView(imageView)
+            }
         }
 
-        val uri = Uri.parse(uriString)
+        viewModel.pdfFileName.observe(viewLifecycleOwner) { name ->
+            fileNameTextView.text = name
+        }
 
-        // 2) Open renderer and display first page
+        loadSheetButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "application/pdf"
+            }
+            startActivityForResult(intent, PICK_PDF_FILE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == PICK_PDF_FILE && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { uri -> handlePdf(uri) }
+        }
+    }
+
+
+    private fun handlePdf(uri: Uri) {
         try {
-            openRenderer(uri)
-            showPage(0)
-        } catch (e: IOException) {
-            Log.e(TAG, "Error opening PDF renderer", e)
-            Toast.makeText(
-                requireContext(),
-                "Error opening PDF: ${e.localizedMessage}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val document = PDDocument.load(inputStream)
 
-    @Throws(IOException::class)
-    private fun openRenderer(uri: Uri) {
-        // Open the file and create PdfRenderer
-        parcelFileDescriptor = requireContext().contentResolver
-            .openFileDescriptor(uri, "r")
-        parcelFileDescriptor?.let {
-            pdfRenderer = PdfRenderer(it)
-            Log.d(TAG, "PDF opened, page count = ${pdfRenderer?.pageCount}")
-        } ?: throw IOException("Could not open ParcelFileDescriptor")
-    }
+            // Get the form
+            val acroForm = document.documentCatalog.acroForm
+            if (acroForm != null) {
+                // Force appearance generation
+                acroForm.needAppearances = true
 
-    private fun showPage(index: Int) {
-        pdfRenderer?.let { renderer ->
-            if (index < 0 || index >= renderer.pageCount) {
-                Log.w(TAG, "Requested page $index out of bounds (0..${renderer.pageCount-1})")
-                return
+                // Refresh all field appearances before flattening
+                acroForm.fields.forEach { field ->
+                    try {
+                        // Make sure the field has a value dictionary
+                        if (field.valueAsString != null) {
+                            field.setValue(field.valueAsString)
+                        }
+                    } catch (e: Exception) {
+                        // Log specific field issues but continue processing
+                        e.printStackTrace()
+                    }
+                }
+
+                // Commit changes to form before flattening
+                document.documentCatalog.acroForm = acroForm
+
+                // Flatten the form - this converts fields to visual elements
+                acroForm.flatten()
             }
 
-            // Render the page
-            val page = renderer.openPage(index)
-            val bitmap = Bitmap.createBitmap(
-                page.width, page.height,
-                Bitmap.Config.ARGB_8888
-            )
-            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            pdfImageView.setImageBitmap(bitmap)
-            page.close()
+            val tempFile = File(requireContext().cacheDir, "flattened.pdf")
+            document.save(tempFile)
+            document.close()
+
+            val fileDescriptor = ParcelFileDescriptor.open(tempFile, ParcelFileDescriptor.MODE_READ_ONLY)
+            val pdfRenderer = PdfRenderer(fileDescriptor)
+
+            val bitmaps = mutableListOf<Bitmap>()
+            for (i in 0 until pdfRenderer.pageCount) {
+                val page = pdfRenderer.openPage(i)
+
+                // Calculate a reasonable scale based on screen width
+                val displayMetrics = resources.displayMetrics
+                val screenWidth = displayMetrics.widthPixels
+                val desiredWidth = screenWidth - 32 // Accounting for some margin
+                val scale = desiredWidth.toFloat() / page.width
+
+                // Create a larger bitmap with scaling
+                val scaledWidth = (page.width * scale).toInt()
+                val scaledHeight = (page.height * scale).toInt()
+
+                val bitmap = Bitmap.createBitmap(
+                    scaledWidth,
+                    scaledHeight,
+                    Bitmap.Config.ARGB_8888 // Using RGB_565 for no transparency and less memory
+                )
+
+                bitmap.eraseColor(android.graphics.Color.WHITE)
+
+                // Create a transformation matrix for scaling
+                val matrix = android.graphics.Matrix()
+                matrix.setScale(scale, scale)
+
+                // Render with the scaling matrix
+                page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
+                bitmaps.add(bitmap)
+                page.close()
+            }
+
+            pdfRenderer.close()
+            fileDescriptor.close()
+
+            viewModel.setPdf(uri, uri.lastPathSegment ?: "PDF Loaded", bitmaps)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Failed to open PDF: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // Clean up
-        pdfRenderer?.close()
-        parcelFileDescriptor?.close()
-    }
 }

@@ -4,7 +4,9 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -56,18 +58,41 @@ class DMActivity : AppCompatActivity() {
 
         viewJoinCode.text = code
 
-        list = mutableListOf(
-            Encounter("Encounter 1"),
-            Encounter("Encounter 2"))
+        list = mutableListOf()
 
         adapter = EncounterAdapter(list)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
         addButton.setOnClickListener {
-            val newItem = Encounter("Encounter ${list.size+1}")
-            adapter.addItem(newItem)
+            showAddEncounterDialog()
         }
+    }
+
+    private fun showAddEncounterDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.add_encounter_dialog, null)
+
+        val nameField = dialogView.findViewById<EditText>(R.id.editName)
+        val acField = dialogView.findViewById<EditText>(R.id.editAC)
+        val hpMaxField = dialogView.findViewById<EditText>(R.id.editHPMax)
+        val hpCurrentField = dialogView.findViewById<EditText>(R.id.editHPCurrent)
+        val initiativeField = dialogView.findViewById<EditText>(R.id.editInitiative)
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Monster")
+            .setView(dialogView)
+            .setPositiveButton("Add") { _, _ ->
+                val name = nameField.text.toString().ifBlank { "Unknown" }
+                val ac = acField.text.toString().toIntOrNull() ?: 10
+                val hpMax = hpMaxField.text.toString().toIntOrNull() ?: 10
+                val hpCurrent = hpCurrentField.text.toString().toIntOrNull() ?: hpMax
+                val initiative = initiativeField.text.toString().toIntOrNull() ?: 0
+
+                val newEncounter = Encounter(name, ac, hpMax, hpCurrent, initiative)
+                adapter.addItem(newEncounter)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun startHosting() {
